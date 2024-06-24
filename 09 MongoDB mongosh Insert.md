@@ -1,58 +1,121 @@
 # MongoDB mongosh Insert 
 
-In MongoDB, you can insert documents into a collection using the `insertOne` or `insertMany` methods. Here's how you can use these methods in the `mongosh` shell:
+Inserting documents into a MongoDB collection using `mongosh` (MongoDB Shell) is a straightforward process. Here's a step-by-step guide to help you insert documents into a collection.
 
-### Insert a Single Document:
+### Step-by-Step Guide: Inserting Documents Using `mongosh`
 
-```javascript
-// Switch to the desired database (optional)
-use mydatabase
+#### Prerequisites
 
-// Insert a single document into a collection
-db.myCollection.insertOne({
-  key1: value1,
-  key2: value2,
-  // ... additional fields
-})
+1. **MongoDB Server**: Ensure that MongoDB is installed and running on your machine. You can download MongoDB from the [MongoDB official website](https://www.mongodb.com/try/download/community).
+2. **MongoDB Shell (`mongosh`)**: Ensure that `mongosh` is installed. You can download it from the [MongoDB Shell download page](https://www.mongodb.com/try/download/shell).
+
+#### Step 1: Start the MongoDB Server
+
+Make sure your MongoDB server is running. Open a terminal and start the MongoDB server by typing:
+
+```sh
+mongod
 ```
 
-Replace "mydatabase" with the name of your database and "myCollection" with the name of your collection. Adjust the document structure and key-value pairs according to your data.
+Leave this terminal window open as the MongoDB server needs to be running in the background.
 
-### Insert Multiple Documents:
+#### Step 2: Open MongoDB Shell (`mongosh`)
 
-```javascript
-// Switch to the desired database (optional)
-use mydatabase
+Open a new terminal window and start the MongoDB Shell by typing:
 
-// Insert multiple documents into a collection
-db.myCollection.insertMany([
-  {
-    key1: value1,
-    key2: value2,
-    // ... additional fields for document 1
-  },
-  {
-    key1: value3,
-    key2: value4,
-    // ... additional fields for document 2
-  },
-  // ... additional documents
+```sh
+mongosh
+```
+
+You will see output similar to this:
+
+```sh
+Current Mongosh Log ID: 60b6e0a...
+Connecting to: mongodb://localhost:27017
+MongoDB server version: 4.4.6
+```
+
+#### Step 3: Switch to the Database
+
+Switch to the database where you want to insert documents. If the database doesn't exist, it will be created when you switch to it. For example, to switch to a database named `codeswithpankaj`, type:
+
+```sh
+use codeswithpankaj
+```
+
+You should see a message indicating that you've switched to the new database:
+
+```sh
+switched to db codeswithpankaj
+```
+
+#### Step 4: Insert a Single Document
+
+To insert a single document into a collection, use the `insertOne` method. If the collection doesn't exist, it will be created when you insert the document. For example, to insert a document into a collection named `users`, type:
+
+```sh
+db.users.insertOne({ name: "Pankaj", age: 30, email: "pankaj@example.com" })
+```
+
+You should see a confirmation message like this:
+
+```sh
+{
+  acknowledged: true,
+  insertedId: ObjectId("60b6e0a...")
+}
+```
+
+#### Step 5: Insert Multiple Documents
+
+To insert multiple documents into a collection, use the `insertMany` method. For example, to insert multiple documents into the `users` collection, type:
+
+```sh
+db.users.insertMany([
+  { name: "John", age: 25, email: "john@example.com" },
+  { name: "Jane", age: 28, email: "jane@example.com" }
 ])
 ```
 
-Again, replace "mydatabase" with the name of your database and "myCollection" with the name of your collection. Adjust the document structures and key-value pairs according to your data.
+You should see a confirmation message like this:
 
-### Verify Insertion:
-
-After inserting documents, you can verify the insertion by querying the collection:
-
-```javascript
-// Find all documents in the collection
-db.myCollection.find()
+```sh
+{
+  acknowledged: true,
+  insertedIds: [
+    ObjectId("60b6e0a..."),
+    ObjectId("60b6e0b...")
+  ]
+}
 ```
 
-This will display all documents in the specified collection.
+#### Step 6: Verify the Insertions
 
-Remember that collections and databases are created dynamically in MongoDB. If the specified collection or database doesn't exist, MongoDB will create them when you insert the first document.
+To verify that your documents were inserted, you can query the collection using the `find` method. For example, to find all documents in the `users` collection, type:
 
-Adjust the code snippets based on your specific use case and data model.
+```sh
+db.users.find().pretty()
+```
+
+You should see the inserted documents:
+
+```sh
+[
+  { _id: ObjectId("60b6e0a..."), name: "Pankaj", age: 30, email: "pankaj@example.com" },
+  { _id: ObjectId("60b6e0b..."), name: "John", age: 25, email: "john@example.com" },
+  { _id: ObjectId("60b6e0c..."), name: "Jane", age: 28, email: "jane@example.com" }
+]
+```
+
+### Summary
+
+Congratulations! You have successfully inserted documents into a MongoDB collection using `mongosh`.
+
+In summary, the steps are:
+1. Ensure the MongoDB server is running.
+2. Open `mongosh`.
+3. Use the `use` command to switch to the desired database.
+4. Insert a single document using `insertOne`.
+5. Insert multiple documents using `insertMany`.
+6. Verify the insertions using `find`.
+
