@@ -1,105 +1,126 @@
-# MongoDB Query API
-MongoDB Query API allows you to interact with your MongoDB database to retrieve, update, and manipulate data. MongoDB supports a rich set of query operators that you can use to filter, project, and manipulate data within your collections. Here are some commonly used MongoDB Query API operations:
+### Step-by-Step Tutorial: Creating a MongoDB Database Using `mongosh`
 
-### Basic Query Operations:
+#### Step 1: Install MongoDB
 
-1. **Find Documents:**
-   - Retrieve documents from a collection that match a query.
+Before you can use `mongosh` (MongoDB Shell), ensure you have MongoDB installed on your machine. You can download and install it from the [MongoDB official website](https://www.mongodb.com/try/download/community).
 
-    ```javascript
-    db.collection.find({ key: value })
-    ```
+#### Step 2: Install MongoDB Shell (`mongosh`)
 
-2. **Equality and Field Existence:**
-   - Find documents where a specific field has a certain value or exists.
+MongoDB Shell (`mongosh`) is the new shell that comes with MongoDB. You can download and install `mongosh` from the [MongoDB Shell download page](https://www.mongodb.com/try/download/shell).
 
-    ```javascript
-    db.collection.find({ field: value })
-    ```
+#### Step 3: Start MongoDB
 
-3. **Inequality:**
-   - Find documents where a specific field has a value not equal to a certain value.
+Make sure your MongoDB server is running. You can start it by executing the following command in your terminal:
 
-    ```javascript
-    db.collection.find({ field: { $ne: value } })
-    ```
+```sh
+mongod
+```
 
-4. **Logical AND:**
-   - Combine multiple conditions using logical AND.
+#### Step 4: Open MongoDB Shell (`mongosh`)
 
-    ```javascript
-    db.collection.find({ $and: [{ condition1 }, { condition2 }] })
-    ```
+Once your MongoDB server is running, open a new terminal window and start the MongoDB Shell by typing:
 
-### Comparison Operators:
+```sh
+mongosh
+```
 
-1. **Greater Than:**
-   - Find documents where a specific field has a value greater than a certain value.
+This will open the MongoDB Shell, and you'll see a prompt like this:
 
-    ```javascript
-    db.collection.find({ field: { $gt: value } })
-    ```
+```sh
+Current Mongosh Log ID: 60b6e0a...
+Connecting to: mongodb://localhost:27017
+MongoDB server version: 4.4.6
+```
 
-2. **Less Than:**
-   - Find documents where a specific field has a value less than a certain value.
+#### Step 5: Create a New Database
 
-    ```javascript
-    db.collection.find({ field: { $lt: value } })
-    ```
+In MongoDB, databases are created dynamically. You don't need to explicitly create a database. Instead, you can simply switch to a new database, and it will be created when you insert data into it. To switch to a new database, use the `use` command followed by the database name. For example, to create a database named `codeswithpankaj`, you would type:
 
-3. **Greater Than or Equal To:**
-   - Find documents where a specific field has a value greater than or equal to a certain value.
+```sh
+use codeswithpankaj
+```
 
-    ```javascript
-    db.collection.find({ field: { $gte: value } })
-    ```
+You should see a confirmation message like this:
 
-4. **Less Than or Equal To:**
-   - Find documents where a specific field has a value less than or equal to a certain value.
+```sh
+switched to db codeswithpankaj
+```
 
-    ```javascript
-    db.collection.find({ field: { $lte: value } })
-    ```
+#### Step 6: Create a Collection
 
-### Querying Arrays:
+In MongoDB, data is stored in collections. A collection is similar to a table in relational databases. To create a collection, you can use the `db.createCollection` method. For example, to create a collection named `users`, type:
 
-1. **Array Elements Match:**
-   - Find documents where an array field contains at least one element that matches a specified condition.
+```sh
+db.createCollection("users")
+```
 
-    ```javascript
-    db.collection.find({ arrayField: { $elemMatch: { condition } } })
-    ```
+You should see a confirmation message like this:
 
-2. **Array Size:**
-   - Find documents where an array field has a specific size.
+```sh
+{ ok: 1 }
+```
 
-    ```javascript
-    db.collection.find({ arrayField: { $size: size } })
-    ```
+#### Step 7: Insert Documents into the Collection
 
-### Projection:
+Now that you have a collection, you can insert documents (records) into it. To insert a document, use the `insertOne` method. For example, to insert a user document, type:
 
-1. **Select Fields to Return:**
-   - Retrieve documents with only the specified fields.
+```sh
+db.users.insertOne({ name: "Pankaj", age: 30, email: "pankaj@example.com" })
+```
 
-    ```javascript
-    db.collection.find({}, { field1: 1, field2: 1, _id: 0 })
-    ```
+You should see a confirmation message like this:
 
-### Update Operations:
+```sh
+{
+  acknowledged: true,
+  insertedId: ObjectId("60b6e0a...")
+}
+```
 
-1. **Update Documents:**
-   - Update documents that match a specified condition.
+#### Step 8: Query the Collection
 
-    ```javascript
-    db.collection.update({ condition }, { $set: { updateFields } })
-    ```
+To verify that your document was inserted, you can query the collection using the `find` method. For example, to find all documents in the `users` collection, type:
 
-2. **Update or Insert (Upsert):**
-   - Update documents that match a specified condition or insert a new document if no match is found.
+```sh
+db.users.find()
+```
 
-    ```javascript
-    db.collection.update({ condition }, { $set: { updateFields } }, { upsert: true })
-    ```
+You should see the inserted document(s):
 
-These are just a few examples of the MongoDB Query API operations. The MongoDB documentation is a valuable resource for exploring the full range of query operators and their usage: [MongoDB Query and Projection Operators](https://docs.mongodb.com/manual/reference/operator/query/).
+```sh
+[
+  { _id: ObjectId("60b6e0a..."), name: "Pankaj", age: 30, email: "pankaj@example.com" }
+]
+```
+
+#### Step 9: Verify the Database Creation
+
+To verify that your database has been created, you can list all databases using the `show dbs` command. However, note that the database will not appear in the list until it contains data. Since we have already inserted a document, you should see `codeswithpankaj` in the list:
+
+```sh
+show dbs
+```
+
+You should see something like this:
+
+```sh
+admin         0.000GB
+codeswithpankaj  0.001GB
+config        0.000GB
+local         0.000GB
+```
+
+#### Summary
+
+Congratulations! You have successfully created a MongoDB database named `codeswithpankaj` and added a collection with some data using `mongosh`.
+
+In summary, the steps are:
+1. Install MongoDB and `mongosh`.
+2. Start the MongoDB server.
+3. Open `mongosh`.
+4. Use the `use` command to create and switch to a new database.
+5. Create a collection using `db.createCollection`.
+6. Insert documents using `insertOne`.
+7. Query the collection using `find`.
+8. Verify the database creation using `show dbs`.
+
