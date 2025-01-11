@@ -100,24 +100,103 @@ db.students.insertMany([
 
 ---
 
-### **Advanced Example**
-Retrieve students with either grade "A" or age greater than 23:
+# How to use MongoDB's common query operators in **mongosh**:
+
+---
+
+### **Sample Data**
+Let's use a collection named `products` with the following documents:
+
 ```javascript
-db.students.find({
+use myDatabase;
+
+db.products.insertMany([
+    { name: "Laptop", price: 800, category: "Electronics", stock: 10 },
+    { name: "Phone", price: 600, category: "Electronics", stock: 25 },
+    { name: "Tablet", price: 300, category: "Electronics", stock: 15 },
+    { name: "Chair", price: 100, category: "Furniture", stock: 50 },
+    { name: "Desk", price: 200, category: "Furniture", stock: 20 },
+    { name: "Lamp", price: 50, category: "Furniture", stock: 30 }
+]);
+```
+
+---
+
+### **Query Examples**
+
+#### **1. `$eq`: Equal to a value**
+Find all products in the "Electronics" category:
+```javascript
+db.products.find({ category: { $eq: "Electronics" } });
+```
+
+#### **2. `$ne`: Not equal to a value**
+Find all products that are not in the "Furniture" category:
+```javascript
+db.products.find({ category: { $ne: "Furniture" } });
+```
+
+#### **3. `$gt`: Greater than a value**
+Find all products with a price greater than 500:
+```javascript
+db.products.find({ price: { $gt: 500 } });
+```
+
+#### **4. `$gte`: Greater than or equal to a value**
+Find all products with a price greater than or equal to 300:
+```javascript
+db.products.find({ price: { $gte: 300 } });
+```
+
+#### **5. `$lt`: Less than a value**
+Find all products with stock less than 20:
+```javascript
+db.products.find({ stock: { $lt: 20 } });
+```
+
+#### **6. `$lte`: Less than or equal to a value**
+Find all products with a price less than or equal to 100:
+```javascript
+db.products.find({ price: { $lte: 100 } });
+```
+
+#### **7. `$in`: Matches any value in an array**
+Find all products in either the "Electronics" or "Furniture" category:
+```javascript
+db.products.find({ category: { $in: ["Electronics", "Furniture"] } });
+```
+
+#### **8. `$or`: Combines multiple conditions with OR logic**
+Find all products with a price greater than 500 **OR** stock less than 20:
+```javascript
+db.products.find({
     $or: [
-        { grade: "A" },
-        { age: { $gt: 23 } }
+        { price: { $gt: 500 } },
+        { stock: { $lt: 20 } }
+    ]
+});
+```
+
+#### **9. `$and`: Combines multiple conditions with AND logic**
+Find all products in the "Electronics" category **AND** with a price less than 800:
+```javascript
+db.products.find({
+    $and: [
+        { category: "Electronics" },
+        { price: { $lt: 800 } }
     ]
 });
 ```
 
 ---
 
-### **Key Notes**
-- The `find()` method returns a cursor, and in **mongosh**, it will automatically display the first 20 results.
-- Use `.pretty()` to format the output for readability:
-   ```javascript
-   db.students.find().pretty();
-   ```
+### **Result Examples**
+**For `$or`:**
+```json
+{ "_id": ObjectId("..."), "name": "Laptop", "price": 800, "category": "Electronics", "stock": 10 }
+{ "_id": ObjectId("..."), "name": "Tablet", "price": 300, "category": "Electronics", "stock": 15 }
+{ "_id": ObjectId("..."), "name": "Chair", "price": 100, "category": "Furniture", "stock": 50 }
+{ "_id": ObjectId("..."), "name": "Lamp", "price": 50, "category": "Furniture", "stock": 30 }
+```
 
-This is how you use the `find` method to query documents in MongoDB effectively!
+This demonstrates how to use these operators effectively in your queries.
