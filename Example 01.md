@@ -1,5 +1,5 @@
  
-# Step-by-Step with Real Commands, Notes & Examples**  
+# Step-by-Step with Real Commands
 
 
 ---
