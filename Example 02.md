@@ -381,6 +381,268 @@ db.users.aggregate([
 ]);
 ```
 
+-------------------------
+
+
+# 1. **Create useful indexes** (including **text** and **2dsphere**)
+# 2. **Run efficient full-text search** using `$text`
+# 3. **Run geospatial queries** using `2dsphere` (with sample location data)
+
+We'll use the **same `users` collection** from your data, but **add location coordinates** to a few users so we can demonstrate **geospatial search**.
+
+---
+
+## Step 1: Add Location Data + Create Indexes
+
+Run this **in `mongosh`** (after your original `insertMany`):
+
+```js
+// --- 1. Add location (latitude, longitude) to some users ---
+db.users.updateOne(
+  { _id: 1 },
+  { $set: { location: { type: "Point", coordinates: [-73.97, 40.77] } } }  // New York
+);
+
+db.users.updateOne(
+  { _id: 3 },
+  { $set: { location: { type: "Point", coordinates: [-118.24, 34.05] } } }  // Los Angeles
+);
+
+db.users.updateOne(
+  { _id: 6 },
+  { $set: { location: { type: "Point", coordinates: [-0.13, 51.51] } } }     // London
+);
+
+db.users.updateOne(
+  { _id: 9 },
+  { $set: { location: { type: "Point", coordinates: [2.35, 48.86] } } }      // Paris
+);
+
+// --- 2. Create Indexes ---
+
+// Text index for full-text search on name and tags
+db.users.createIndex(
+  { name: "text", tags: "text" },
+  { name: "text_name_tags" }
+);
+
+// 2dsphere index for geospatial queries on location
+db.users.createIndex(
+  { location: "2dsphere" },
+  { name: "geo_location_2dsphere" }
+);
+
+// Optional: Regular index on status (for fast filtering)
+db.users.createIndex({ status: 1 });
+
+// Confirm indexes
+printjson(db.users.getIndexes());
+```
+
+> **Why?**  
+> - `text` index → enables `$text` search (fast "contains" on words)  
+> - `2dsphere` index → enables `$near`, `$geoWithin` (Earth-like distance)  
+> - Regular index → speeds up `$match` on `status`
+
+---
+
+## Example 1: Full-Text Search with `$text`
+
+### Goal: Find users who have **"react"** or **"python"** in `name` or `tags`
+
+```js
+db.users.aggregate([
+  { $match: { $text: { $search: "react python" } } },
+  { $project: { name: 1, tags: 1, score: { $meta: "textScore" } } },
+  { $sort: { score: { $meta: "textScore" } } }
+]);
+```
+
+### Expected Output:
+```json
+{ "_id": 1, "name": "Alice Johnson", "tags": ["dev", "frontend", "react"], "score": 1.5 }
+{ "_id": 5, "name": "Eve Adams",       "tags": ["startup", "python", "ai"],     "score": 1.1 }
+```
+
+> **Note**:  
+> - `$text` uses the **text index** → very fast even on millions of docs  
+> - `textScore` ranks relevance  
+> - Words are **stemmed** (`reacting` → `react`)
+
+---
+
+## Example 2: Search for Phrase (Exact Match)
+
+```js
+db.users.aggregate([
+  { $match: { $text: { $search: "\"wonder woman\"" } } },
+  { $project: { name: 1, tags: 1 } }
+]);
+```
+
+> Use quotes for **exact phrase** → only matches if "wonder" and "woman" appear together
+
+---
+
+## Example 3: Exclude Words (Negative Search)
+
+```js
+db.users.aggregate([
+  { $match: { $text: { $search: "dc -batman" } } },
+  { $project: { name: 1, tags: 1 } }
+]);
+```
+
+**Result**: Diana Prince (has "dc", no "batman")  
+**Not returned**: Frank Miller (has "batman")
+
+---
+
+## Example 4: Geospatial Search – Users Near a Point
+
+### Goal: Find users within **500 km** of **Tokyo** (`[139.65, 35.67]`)
+
+```js
+db.users.aggregate([
+  {
+    $geoNear: {
+      near: { type: "Point", coordinates: [139.65, 35.67] },  // Tokyo
+      distanceField: "dist.calculated",
+      maxDistance: 500 * 1000,  // 500 km in meters
+      spherical: true
+    }
+  },
+  {
+    $project: {
+      name: 1,
+      location: 1,
+      distance_km: { $divide: ["$dist.calculated", 1000] }
+    }
+  }
+]);
+```
+
+### Expected Output (none close to Tokyo):
+```json
+// No users within 500 km of Tokyo → empty result
+```
+
+But let’s test with **New York**:
+
+```js
+db.users.aggregate([
+  {
+    $geoNear: {
+      near: { type: "Point", coordinates: [-73.97, 40.77] },  // NYC
+      distanceField: "dist.calculated",
+      maxDistance: 100 * 1000,
+      spherical: true
+    }
+  },
+  { $project: { name: 1, distance_km: { $round: [{ $divide: ["$dist.calculated", 1000] }, 1] } } }
+]);
+```
+
+**Output**:
+```json
+{ "_id": 1, "name": "Alice Johnson", "distance_km": 0 }
+```
+
+---
+
+## Example 5: Find Users Inside a Geographic Area
+
+### Goal: Users in **Europe** (approximate polygon)
+
+```js
+db.users.aggregate([
+  {
+    $match: {
+      location: {
+        $geoWithin: {
+          $geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [-10, 35], [40, 35], [40, 70], [-10, 70], [-10, 35]  // Rough Europe box
+            ]]
+          }
+        }
+      }
+    }
+  },
+  { $project: { name: 1, location: 1 } }
+]);
+```
+
+**Output**:
+```json
+{ "_id": 6, "name": "Frank Miller", "location": { "type": "Point", "coordinates": [-0.13, 51.51] } }  // London
+{ "_id": 9, "name": "Iris West",    "location": { "type": "Point", "coordinates": [2.35, 48.86] } }     // Paris
+```
+
+---
+
+## Bonus: Combine Text + Geo Search
+
+### Find **active users** with **"dc"** in tags **near London**
+
+```js
+db.users.aggregate([
+  { $match: { status: "active", $text: { $search: "dc" } } },
+  {
+    $geoNear: {
+      near: { type: "Point", coordinates: [-0.13, 51.51] },
+      distanceField: "dist_km",
+      maxDistance: 1000000,  // 1000 km
+      spherical: true
+    }
+  },
+  {
+    $project: {
+      name: 1,
+      tags: 1,
+      distance_km: { $round: [{ $divide: ["$dist_km", 1000] }, 1] },
+      score: { $meta: "textScore" }
+    }
+  },
+  { $sort: { score: { $meta: "textScore" }, dist_km: 1 } }
+]);
+```
+
+**Output**:
+```json
+{ "name": "Frank Miller", "tags": ["comics", "batman", "graphic-novel"], "distance_km": 0, "score": 0.75 }
+{ "name": "Iris West",    "tags": ["flash", "journalism", "dc"],          "distance_km": 335.2, "score": 1.1 }
+```
+
+---
+
+## Summary Table
+
+| Feature             | Index Type       | Query Operator       | Use Case |
+|---------------------|------------------|----------------------|----------|
+| Full-text search    | `text`           | `$text`, `$search`   | Search names, tags, descriptions |
+| Geospatial (Earth)  | `2dsphere`       | `$near`, `$geoWithin`| Find nearby users, stores, events |
+| Fast filtering      | `1` or `-1`      | `$match`             | `status`, `role`, etc. |
+
+---
+
+## Pro Tips
+
+- Always create **text index** before using `$text`
+- Use **GeoJSON** format: `{ type: "Point", coordinates: [lng, lat] }`
+- `$geoNear` **must be first stage** in pipeline
+- Use `.explain("executionStats")` to verify index usage
+
+```js
+db.users.find({ $text: { $search: "react" } }).explain("executionStats")
+```
+
+---
+
+
+
+
 
 
 
