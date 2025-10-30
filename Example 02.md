@@ -1,4 +1,4 @@
-## complete script** to **create a `users` collection** and **insert realistic sample data** that you can use to test all the `$regex` examples from earlier.
+## Complete script** to **create a `users` collection** and **insert realistic sample data** that you can use to test all the `$regex` examples from earlier.
 
 ---
 
