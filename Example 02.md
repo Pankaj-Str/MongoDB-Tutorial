@@ -188,5 +188,163 @@ db.users.find({ tags: { $regex: /wonder/i } }).pretty();
 db.users.find({ status: { $regex: '^active$', $options: 'i' } }).pretty();
 ```
 
+-------------------
+
+# MongoDB Aggregation Pipeline
+
+- `$match` → Filter
+- `$group` → Group & calculate
+- `$project` → Select/show fields
+- `$sort` → Sort results
+- `$limit` → Limit output
+
 ---
+
+### Sample Data (We’ll use the `users` collection from before)
+
+```js
+[
+  { name: "Alice", dept: "IT", salary: 7000 },
+  { name: "Bob",   dept: "HR", salary: 5000 },
+  { name: "Charlie", dept: "IT", salary: 8000 },
+  { name: "Diana", dept: "HR", salary: 5500 },
+  { name: "Eve",   dept: "IT", salary: 7500 }
+]
+```
+
+---
+
+## Goal:
+> **"Find average salary per department, but only for departments with average salary > 6000, and show top 2 departments by average salary."**
+
+---
+
+## Aggregation Pipeline (Step-by-step)
+
+```js
+db.users.aggregate([
+  // Step 1: FILTER - Keep only IT and HR (example filter)
+  {
+    $match: { dept: { $in: ["IT", "HR"] } }
+  },
+
+  // Step 2: GROUP - Group by department, calculate avg salary
+  {
+    $group: {
+      _id: "$dept",                    // Group by department
+      avgSalary: { $avg: "$salary" },  // Average salary
+      totalEmployees: { $sum: 1 }      // Count employees
+    }
+  },
+
+  // Step 3: FILTER AGAIN - Only depts with avg > 6000
+  {
+    $match: { avgSalary: { $gt: 6000 } }
+  },
+
+  // Step 4: PROJECT - Rename and format output
+  {
+    $project: {
+      _id: 0,                         // Hide _id
+      department: "$_id",             // Rename _id → department
+      averageSalary: { $round: ["$avgSalary", 2] },  // Round to 2 decimals
+      employeeCount: "$totalEmployees"
+    }
+  },
+
+  // Step 5: SORT - Highest average salary first
+  {
+    $sort: { averageSalary: -1 }
+  },
+
+  // Step 6: LIMIT - Show only top 2
+  {
+    $limit: 2
+  }
+])
+```
+
+---
+
+## Output (Easy to Read)
+
+```json
+[
+  {
+    "department": "IT",
+    "averageSalary": 7500,
+    "employeeCount": 3
+  },
+  {
+    "department": "HR",
+    "averageSalary": 5250,
+    "employeeCount": 2
+  }
+]
+```
+
+> Only **IT** appears because HR avg (5250) is **not > 6000**.
+
+---
+
+## Each Stage Explained (Super Simple)
+
+| Stage        | What it does                              | Like SQL |
+|-------------|-------------------------------------------|---------|
+| `$match`    | Filters documents (like `WHERE`)          | `WHERE dept IN ('IT','HR')` |
+| `$group`    | Groups and calculates (like `GROUP BY`)   | `GROUP BY dept` |
+| `$project`  | Picks or reshapes fields (like `SELECT`)  | `SELECT dept, AVG(salary)` |
+| `$sort`     | Orders results                            | `ORDER BY avgSalary DESC` |
+| `$limit`    | Shows only first N results                | `LIMIT 2` |
+
+---
+
+## Try This Now! (Copy-Paste in `mongosh`)
+
+```js
+// First, insert sample data
+db.users.drop();
+db.users.insertMany([
+  { name: "Alice", dept: "IT", salary: 7000 },
+  { name: "Bob", dept: "HR", salary: 5000 },
+  { name: "Charlie", dept: "IT", salary: 8000 },
+  { name: "Diana", dept: "HR", salary: 5500 },
+  { name: "Eve", dept: "IT", salary: 7500 }
+]);
+
+// Then run the pipeline
+db.users.aggregate([
+  { $match: { dept: { $in: ["IT", "HR"] } } },
+  { $group: { _id: "$dept", avgSalary: { $avg: "$salary" }, totalEmployees: { $sum: 1 } } },
+  { $match: { avgSalary: { $gt: 6000 } } },
+  { $project: { _id: 0, department: "$_id", averageSalary: { $round: ["$avgSalary", 2] }, employeeCount: "$totalEmployees" } },
+  { $sort: { averageSalary: -1 } },
+  { $limit: 2 }
+]).pretty();
+```
+
+---
+
+## Bonus: Visual Flow
+
+```
+All Docs
+   ↓ $match → only IT & HR
+   ↓ $group → avg salary per dept
+   ↓ $match → avg > 6000
+   ↓ $project → clean output
+   ↓ $sort → high to low
+   ↓ $limit → top 2
+```
+
+---
+
+**You're now an aggregation beginner pro!**
+
+Try changing:
+- `$match` → add `salary > 6000`
+- `$group` → use `$sum`, `$max`, `$min`
+- `$project` → add `1` or `0` to show/hide fields
+
+
 
