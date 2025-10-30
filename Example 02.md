@@ -200,151 +200,187 @@ db.users.find({ status: { $regex: '^active$', $options: 'i' } }).pretty();
 
 ---
 
-### Sample Data (We’ll use the `users` collection from before)
+### Examples** for key MongoDB aggregation pipeline stages: `$match`, `$group`, `$project`, and a few others (`$sort`, `$limit`, `$unwind`). Each example is **standalone** (focuses on one main stage) but may include basic combinations for context. I'll use the `users` collection you provided (10 documents).
 
-```js
-[
-  { name: "Alice", dept: "IT", salary: 7000 },
-  { name: "Bob",   dept: "HR", salary: 5000 },
-  { name: "Charlie", dept: "IT", salary: 8000 },
-  { name: "Diana", dept: "HR", salary: 5500 },
-  { name: "Eve",   dept: "IT", salary: 7500 }
-]
-```
+For each example:
+- **Goal**: What the pipeline does.
+- **Step-by-Step Explanation**: Easy breakdown.
+- **Pipeline Code**: Ready-to-run in `mongosh`.
+- **Expected Output**: Based on the data (I'll simulate it since the dataset is small).
+
+Run these in `mongosh` after inserting the data. Aggregation uses `db.users.aggregate([...])`.
 
 ---
 
-## Goal:
-> **"Find average salary per department, but only for departments with average salary > 6000, and show top 2 departments by average salary."**
+### Example 1: `$match` (Filter Documents)
+**Goal**: Find all users with `status: "active"`. `$match` acts like a filter to narrow down documents early in the pipeline.
 
----
+**Step-by-Step Explanation**:
+1. Start with all 10 documents in the `users` collection.
+2. Use `$match` to keep only those where `status` equals `"active"` (case-sensitive).
+3. The pipeline outputs the matching full documents (7 out of 10 match).
 
-## Aggregation Pipeline (Step-by-step)
-
+**Pipeline Code**:
 ```js
 db.users.aggregate([
-  // Step 1: FILTER - Keep only IT and HR (example filter)
-  {
-    $match: { dept: { $in: ["IT", "HR"] } }
-  },
-
-  // Step 2: GROUP - Group by department, calculate avg salary
-  {
-    $group: {
-      _id: "$dept",                    // Group by department
-      avgSalary: { $avg: "$salary" },  // Average salary
-      totalEmployees: { $sum: 1 }      // Count employees
-    }
-  },
-
-  // Step 3: FILTER AGAIN - Only depts with avg > 6000
-  {
-    $match: { avgSalary: { $gt: 6000 } }
-  },
-
-  // Step 4: PROJECT - Rename and format output
-  {
-    $project: {
-      _id: 0,                         // Hide _id
-      department: "$_id",             // Rename _id → department
-      averageSalary: { $round: ["$avgSalary", 2] },  // Round to 2 decimals
-      employeeCount: "$totalEmployees"
-    }
-  },
-
-  // Step 5: SORT - Highest average salary first
-  {
-    $sort: { averageSalary: -1 }
-  },
-
-  // Step 6: LIMIT - Show only top 2
-  {
-    $limit: 2
-  }
-])
-```
-
----
-
-## Output (Easy to Read)
-
-```json
-[
-  {
-    "department": "IT",
-    "averageSalary": 7500,
-    "employeeCount": 3
-  },
-  {
-    "department": "HR",
-    "averageSalary": 5250,
-    "employeeCount": 2
-  }
-]
-```
-
-> Only **IT** appears because HR avg (5250) is **not > 6000**.
-
----
-
-## Each Stage Explained (Super Simple)
-
-| Stage        | What it does                              | Like SQL |
-|-------------|-------------------------------------------|---------|
-| `$match`    | Filters documents (like `WHERE`)          | `WHERE dept IN ('IT','HR')` |
-| `$group`    | Groups and calculates (like `GROUP BY`)   | `GROUP BY dept` |
-| `$project`  | Picks or reshapes fields (like `SELECT`)  | `SELECT dept, AVG(salary)` |
-| `$sort`     | Orders results                            | `ORDER BY avgSalary DESC` |
-| `$limit`    | Shows only first N results                | `LIMIT 2` |
-
----
-
-## Try This Now! (Copy-Paste in `mongosh`)
-
-```js
-// First, insert sample data
-db.users.drop();
-db.users.insertMany([
-  { name: "Alice", dept: "IT", salary: 7000 },
-  { name: "Bob", dept: "HR", salary: 5000 },
-  { name: "Charlie", dept: "IT", salary: 8000 },
-  { name: "Diana", dept: "HR", salary: 5500 },
-  { name: "Eve", dept: "IT", salary: 7500 }
+  { $match: { status: "active" } }
 ]);
+```
 
-// Then run the pipeline
+**Expected Output** (7 documents):
+```json
+{ "_id": 1, "name": "Alice Johnson", "email": "alice.johnson@example.com", "status": "active", ... }
+{ "_id": 3, "name": "Charlie Brown", "email": "charlie@peanuts.org", "status": "active", ... }
+{ "_id": 4, "name": "Diana Prince", "email": "diana@amazon.heroes", "status": "active", ... }
+{ "_id": 6, "name": "Frank Miller", "email": "frank.miller@darkknight.com", "status": "active", ... }
+{ "_id": 7, "name": "Grace Hopper", "email": "grace@navy.mil", "status": "active", ... }
+{ "_id": 9, "name": "Iris West", "email": "iris@centralcity.news", "status": "active", ... }
+{ "_id": 10, "name": "Jack Ryan", "email": "jack.ryan@cia.gov", "status": "active", ... }
+```
+
+---
+
+### Example 2: `$group` (Aggregate Data)
+**Goal**: Count users by `role`. `$group` groups documents and applies calculations (like count).
+
+**Step-by-Step Explanation**:
+1. Start with all 10 documents.
+2. Use `$group` to group by the `role` field (e.g., all "user" together).
+3. For each group, calculate a new field `count` using `$sum: 1` (adds 1 per document).
+4. Output is new documents: one per unique role with its count.
+
+**Pipeline Code**:
+```js
 db.users.aggregate([
-  { $match: { dept: { $in: ["IT", "HR"] } } },
-  { $group: { _id: "$dept", avgSalary: { $avg: "$salary" }, totalEmployees: { $sum: 1 } } },
-  { $match: { avgSalary: { $gt: 6000 } } },
-  { $project: { _id: 0, department: "$_id", averageSalary: { $round: ["$avgSalary", 2] }, employeeCount: "$totalEmployees" } },
-  { $sort: { averageSalary: -1 } },
-  { $limit: 2 }
-]).pretty();
+  { $group: { _id: "$role", count: { $sum: 1 } } }
+]);
+```
+
+**Expected Output** (6 documents, one per role):
+```json
+{ "_id": "admin", "count": 1 }
+{ "_id": "user", "count": 2 }
+{ "_id": "editor", "count": 1 }
+{ "_id": "superhero", "count": 1 }
+{ "_id": "artist", "count": 1 }
+{ "_id": "pioneer", "count": 1 }
+{ "_id": "founder", "count": 1 }
+{ "_id": "reporter", "count": 1 }
+{ "_id": "analyst", "count": 1 }
 ```
 
 ---
 
-## Bonus: Visual Flow
+### Example 3: `$project` (Select and Reshape Fields)
+**Goal**: Show only `name` and `email` for all users, and add a new field `nameUpper` (uppercase name). `$project` picks fields and can create new ones.
 
+**Step-by-Step Explanation**:
+1. Start with all 10 documents.
+2. Use `$project` to include specific fields: keep `name` and `email`.
+3. Create a new field `nameUpper` using `$toUpper: "$name"` (converts name to uppercase).
+4. `_id` is included by default; set `_id: 0` to hide it.
+5. Output is reshaped documents (10 total).
+
+**Pipeline Code**:
+```js
+db.users.aggregate([
+  { $project: { _id: 0, name: 1, email: 1, nameUpper: { $toUpper: "$name" } } }
+]);
 ```
-All Docs
-   ↓ $match → only IT & HR
-   ↓ $group → avg salary per dept
-   ↓ $match → avg > 6000
-   ↓ $project → clean output
-   ↓ $sort → high to low
-   ↓ $limit → top 2
+
+**Expected Output** (10 documents, truncated):
+```json
+{ "name": "Alice Johnson", "email": "alice.johnson@example.com", "nameUpper": "ALICE JOHNSON" }
+{ "name": "bob smith", "email": "BOB.SMITH@EXAMPLE.COM", "nameUpper": "BOB SMITH" }
+{ "name": "Charlie Brown", "email": "charlie@peanuts.org", "nameUpper": "CHARLIE BROWN" }
+... (and so on for all 10)
 ```
 
 ---
 
-**You're now an aggregation beginner pro!**
+### Example 4: `$sort` (Sort Results)
+**Goal**: Sort users by `createdAt` (oldest to newest). `$sort` orders documents.
 
-Try changing:
-- `$match` → add `salary > 6000`
-- `$group` → use `$sum`, `$max`, `$min`
-- `$project` → add `1` or `0` to show/hide fields
+**Step-by-Step Explanation**:
+1. Start with all 10 documents.
+2. Use `$sort` on `createdAt`: `1` means ascending (oldest first).
+3. Output is the full documents, now sorted.
+
+**Pipeline Code**:
+```js
+db.users.aggregate([
+  { $sort: { createdAt: 1 } }
+]);
+```
+
+**Expected Output** (10 documents, sorted by date):
+```json
+{ "_id": 1, "name": "Alice Johnson", "createdAt": ISODate("2023-01-15T10:30:00Z"), ... }  // Oldest
+{ "_id": 2, "name": "bob smith", "createdAt": ISODate("2023-02-20T14:22:11Z"), ... }
+{ "_id": 3, "name": "Charlie Brown", "createdAt": ISODate("2023-03-10T09:15:45Z"), ... }
+... (up to Jack Ryan as newest)
+```
+
+---
+
+### Example 5: `$limit` (Limit Number of Results)
+**Goal**: Get the first 3 users (no specific order). `$limit` caps the output count.
+
+**Step-by-Step Explanation**:
+1. Start with all 10 documents (default order by `_id`).
+2. Use `$limit: 3` to keep only the first 3.
+3. Output is the full documents (limited to 3).
+
+**Pipeline Code**:
+```js
+db.users.aggregate([
+  { $limit: 3 }
+]);
+```
+
+**Expected Output** (3 documents):
+```json
+{ "_id": 1, "name": "Alice Johnson", ... }
+{ "_id": 2, "name": "bob smith", ... }
+{ "_id": 3, "name": "Charlie Brown", ... }
+```
+
+---
+
+### Example 6: `$unwind` (Flatten Arrays)
+**Goal**: Unwind the `tags` array to create one document per tag. `$unwind` expands arrays.
+
+**Step-by-Step Explanation**:
+1. Start with all 10 documents (each has a `tags` array, e.g., Alice has 3 tags).
+2. Use `$unwind: "$tags"` to create a new document for each tag value.
+3. Output has more documents (total ~25, since most have 2-3 tags).
+
+**Pipeline Code**:
+```js
+db.users.aggregate([
+  { $unwind: "$tags" }
+]);
+```
+
+**Expected Output** (truncated; one doc per tag):
+```json
+{ "_id": 1, "name": "Alice Johnson", "tags": "dev", ... }  // Alice's first tag
+{ "_id": 1, "name": "Alice Johnson", "tags": "frontend", ... }  // Alice's second
+{ "_id": 1, "name": "Alice Johnson", "tags": "react", ... }  // Alice's third
+{ "_id": 2, "name": "bob smith", "tags": "marketing", ... }
+... (and so on for all tags across users)
+```
+
+---
+
+These are basic building blocks. You can combine them (e.g., `$match` then `$group`) for more power. For example, to count active users by role:
+```js
+db.users.aggregate([
+  { $match: { status: "active" } },
+  { $group: { _id: "$role", count: { $sum: 1 } } }
+]);
+```
+
 
 
 
