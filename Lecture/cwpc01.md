@@ -1,6 +1,73 @@
 ```python
 
+use cwpc;
+show dbs;
+db.createCollection("School");
+show collections;
 
+// insert one item into collections
+db.School.insertOne({name:"nishant",age:30,email:"nishant@cwpc.in"})
+
+db.School.insertOne({name:"nishant",age:30,email:"nishant@cwpc.in",height:4.5})
+
+
+db.School.insertMany([
+  {name:"Rohan",age:30,email:"Rohan@cwpc.in"},
+  {name:"Niraj",age:30,email:"Niraj@cwpc.in"},
+  {name:"Pranali",age:30,email:"Pranali@cwpc.in"},
+  {name:"Vijay",age:30,email:"Vijay@cwpc.in"}
+  ]);
+  
+// show records 
+
+db.School.find();
+
+
+db.School.find().pretty();
+
+
+db.createCollection("Product");
+
+db.Product.insertMany([
+    {name : "Laptop",price:800,category:"Electronics",stock:10},
+    {name : "Phone",price:900,category:"Electronics",stock:25},
+    {name : "keyboard",price:1600,category:"Electronics",stock:30},
+    {name : "Chair",price:4500,category:"Furniture",stock:56},
+    {name : "Table",price:600,category:"Furniture",stock:20},
+    {name : "USB",price:450,category:"Electronics",stock:60},
+    {name : "TV",price:600,category:"Electronics",stock:16},
+  ])
+  
+  
+db.Product.find().pretty(); 
+
+db.Product.updateOne(
+  {name:"Laptop"},
+  {$inc: {stock:5}}
+);
+
+db.Product.find().pretty();
+
+
+db.Product.updateMany(
+  {price: {$gt :600}},
+  {$set: {category:"Premium Products"}}
+  
+  )
+
+db.Product.find().pretty();
+
+db.Product.replaceOne(
+  {name:"Chair"},
+  {Name : "ArmChair",price:7800,category:"Furniture",stock:30}
+);
+
+
+db.Product.find().pretty(); 
+  
+
+
+// Date - 16 -12 -2025
 
 use cwpc;
 show dbs;
