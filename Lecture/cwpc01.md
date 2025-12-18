@@ -212,7 +212,33 @@ db.student.find({age:{$gt:20}}).pretty();
  
   
   
+// $in 
+db.student.find({hobbies:{$in: ["coding"]}}).pretty();
+db.student.find({hobbies:{$in: ["coding","sports"]}}).pretty();
   
+ 
+// $nin
+db.student.find({hobbies:{$nin: ["coding","sports"]}}).pretty();
+
+// $and
+
+db.student.find({$and:[{age:{$gt:21}},{gpa:{$gte:3.5}}]}).pretty();
+  
+  
+ db.student.find({$and:[{age:{$gt:21}},{gpa:{$gte:3.5}}]}).pretty();
+
+// $or
+
+db.student.find({$or:[{age:{$gt:21}},{gpa:{$gte:3.5}}]}).pretty();
+  
+
+//$not
+
+db.student.find({age:{$not:{$lt:22}}}).pretty();  
+
+// $nor
+
+db.student.find({$nor:[{major:"Math"},{gpa:4.0}]}).pretty(); 
   
   
   
