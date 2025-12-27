@@ -64,4 +64,164 @@ The `$currentDate` operator sets the value of a field to the current date or tim
 db.collection.updateOne({ _id: 1 }, { $currentDate: { key: true } })
 ```
 
-These are just a few examples of MongoDB update operators. You can use these operators individually or combine them to perform complex updates on your documents. For more details, refer to the official documentation: [MongoDB Update Operators](https://docs.mongodb.com/manual/reference/operator/update/).
+
+
+---
+
+#Complete Example: `$min` and `$max` in **MongoDB**
+
+### Scenario
+
+You are managing a **student performance system** where:
+
+* You want to store the **highest marks** a student ever scored.
+* You want to store the **lowest attendance percentage** recorded.
+
+---
+
+## 1. Create Database and Collection
+
+```js
+use schoolDB
+```
+
+```js
+db.students.insertOne({
+  _id: 1,
+  name: "Amit",
+  highestMarks: 78,
+  lowestAttendance: 85
+})
+```
+
+---
+
+## 2. View Initial Document
+
+```js
+db.students.find()
+```
+
+### Output
+
+```js
+{
+  _id: 1,
+  name: "Amit",
+  highestMarks: 78,
+  lowestAttendance: 85
+}
+```
+
+---
+
+## 3. Update Using `$max` (Highest Marks)
+
+Student scored **82**, which is higher than previous **78**.
+
+```js
+db.students.updateOne(
+  { _id: 1 },
+  { $max: { highestMarks: 82 } }
+)
+```
+
+Result:
+
+```js
+highestMarks becomes 82
+```
+
+Updated because `82 > 78`.
+
+---
+
+## 4. Update Using `$max` (Lower Value – No Change)
+
+Student scored **75**.
+
+```js
+db.students.updateOne(
+  { _id: 1 },
+  { $max: { highestMarks: 75 } }
+)
+```
+
+No update because `75 < 82`.
+
+---
+
+## 5. Update Using `$min` (Lowest Attendance)
+
+Attendance dropped to **80**.
+
+```js
+db.students.updateOne(
+  { _id: 1 },
+  { $min: { lowestAttendance: 80 } }
+)
+```
+
+Result:
+
+```js
+lowestAttendance becomes 80
+```
+
+Updated because `80 < 85`.
+
+---
+
+## 6. Update Using `$min` (Higher Value – No Change)
+
+Attendance increased to **90**.
+
+```js
+db.students.updateOne(
+  { _id: 1 },
+  { $min: { lowestAttendance: 90 } }
+)
+```
+
+No update because `90 > 80`.
+
+---
+
+## 7. `$min` and `$max` Together in One Query
+
+New exam marks and attendance update together.
+
+```js
+db.students.updateOne(
+  { _id: 1 },
+  {
+    $max: { highestMarks: 88 },
+    $min: { lowestAttendance: 75 }
+  }
+)
+```
+
+---
+
+## 8. Final Document
+
+```js
+db.students.find()
+```
+
+### Final Output
+
+```js
+{
+  _id: 1,
+  name: "Amit",
+  highestMarks: 88,
+  lowestAttendance: 75
+}
+```
+
+---
+
+
+
+
