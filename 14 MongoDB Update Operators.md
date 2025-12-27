@@ -1,105 +1,50 @@
+
+
 # MongoDB Update Operators
 
-MongoDB provides update operators that you can use to modify the contents of documents in a collection. Here are some commonly used update operators:
-
-### `$set` Operator:
-
-The `$set` operator updates the value of a field in a document. If the field does not exist, `$set` will create it.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $set: { key: newValue } })
-```
-
-### `$unset` Operator:
-
-The `$unset` operator removes the specified field from a document.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $unset: { key: 1 } })
-```
-
-### `$inc` Operator:
-
-The `$inc` operator increments the value of the specified field by a certain amount.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $inc: { key: 5 } })
-```
-
-### `$mul` Operator:
-
-The `$mul` operator multiplies the value of the specified field by a certain amount.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $mul: { key: 2 } })
-```
-
-### `$rename` Operator:
-
-The `$rename` operator renames a field in a document.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $rename: { oldKey: "newKey" } })
-```
-
-### `$min` and `$max` Operators:
-
-The `$min` operator updates the value of the specified field to a specified value if the specified value is less than the current value.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $min: { key: minValue } })
-```
-
-The `$max` operator updates the value of the specified field to a specified value if the specified value is greater than the current value.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $max: { key: maxValue } })
-```
-
-### `$currentDate` Operator:
-
-The `$currentDate` operator sets the value of a field to the current date or timestamp.
-
-```javascript
-db.collection.updateOne({ _id: 1 }, { $currentDate: { key: true } })
-```
-
-
+Using **MongoDB**
 
 ---
 
-# Complete Example: `$min` and `$max` in **MongoDB**
-
-### Scenario
-
-You are managing a **student performance system** where:
-
-* You want to store the **highest marks** a student ever scored.
-* You want to store the **lowest attendance percentage** recorded.
-
----
-
-## 1. Create Database and Collection
+## Step 1: Create Database
 
 ```js
-use schoolDB
-```
-
-```js
-db.students.insertOne({
-  _id: 1,
-  name: "Amit",
-  highestMarks: 78,
-  lowestAttendance: 85
-})
+use companyDB
 ```
 
 ---
 
-## 2. View Initial Document
+## Step 2: Create Dataset (Collection + Documents)
+
+We start with an **employees dataset**.
 
 ```js
-db.students.find()
+db.employees.insertMany([
+  {
+    _id: 1,
+    name: "Amit",
+    department: "IT",
+    salary: 40000,
+    experience: 2,
+    rating: 3
+  },
+  {
+    _id: 2,
+    name: "Neha",
+    department: "HR",
+    salary: 35000,
+    experience: 3,
+    rating: 4
+  }
+])
+```
+
+---
+
+## Step 3: View Dataset
+
+```js
+db.employees.find()
 ```
 
 ### Output
@@ -108,105 +53,159 @@ db.students.find()
 {
   _id: 1,
   name: "Amit",
-  highestMarks: 78,
-  lowestAttendance: 85
+  department: "IT",
+  salary: 40000,
+  experience: 2,
+  rating: 3
+}
+{
+  _id: 2,
+  name: "Neha",
+  department: "HR",
+  salary: 35000,
+  experience: 3,
+  rating: 4
 }
 ```
 
 ---
 
-## 3. Update Using `$max` (Highest Marks)
-
-Student scored **82**, which is higher than previous **78**.
-
-```js
-db.students.updateOne(
-  { _id: 1 },
-  { $max: { highestMarks: 82 } }
-)
-```
-
-Result:
-
-```js
-highestMarks becomes 82
-```
-
-Updated because `82 > 78`.
+# Applying Update Operators Step by Step
 
 ---
 
-## 4. Update Using `$max` (Lower Value – No Change)
+## Step 4: `$set` Operator
 
-Student scored **75**.
+Used to **update or add new fields**.
+
+### Example: Update department and add location
 
 ```js
-db.students.updateOne(
+db.employees.updateOne(
   { _id: 1 },
-  { $max: { highestMarks: 75 } }
-)
-```
-
-No update because `75 < 82`.
-
----
-
-## 5. Update Using `$min` (Lowest Attendance)
-
-Attendance dropped to **80**.
-
-```js
-db.students.updateOne(
-  { _id: 1 },
-  { $min: { lowestAttendance: 80 } }
-)
-```
-
-Result:
-
-```js
-lowestAttendance becomes 80
-```
-
-Updated because `80 < 85`.
-
----
-
-## 6. Update Using `$min` (Higher Value – No Change)
-
-Attendance increased to **90**.
-
-```js
-db.students.updateOne(
-  { _id: 1 },
-  { $min: { lowestAttendance: 90 } }
-)
-```
-
-No update because `90 > 80`.
-
----
-
-## 7. `$min` and `$max` Together in One Query
-
-New exam marks and attendance update together.
-
-```js
-db.students.updateOne(
-  { _id: 1 },
-  {
-    $max: { highestMarks: 88 },
-    $min: { lowestAttendance: 75 }
-  }
+  { $set: { department: "Data Science", location: "Mumbai" } }
 )
 ```
 
 ---
 
-## 8. Final Document
+## Step 5: `$unset` Operator
+
+Used to **remove a field**.
+
+### Example: Remove rating field
 
 ```js
-db.students.find()
+db.employees.updateOne(
+  { _id: 1 },
+  { $unset: { rating: 1 } }
+)
+```
+
+---
+
+## Step 6: `$inc` Operator
+
+Used to **increase or decrease numeric values**.
+
+### Example: Increase salary by 5000
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $inc: { salary: 5000 } }
+)
+```
+
+Salary becomes `45000`.
+
+---
+
+## Step 7: `$mul` Operator
+
+Used to **multiply numeric values**.
+
+### Example: Double the experience
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $mul: { experience: 2 } }
+)
+```
+
+Experience becomes `4`.
+
+---
+
+## Step 8: `$rename` Operator
+
+Used to **rename a field**.
+
+### Example: Rename `experience` to `totalExperience`
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $rename: { experience: "totalExperience" } }
+)
+```
+
+---
+
+## Step 9: `$min` Operator
+
+Updates the field **only if the new value is smaller**.
+
+### Example: Track minimum salary offered
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $min: { salary: 42000 } }
+)
+```
+
+Salary becomes `42000` because `42000 < 45000`.
+
+---
+
+## Step 10: `$max` Operator
+
+Updates the field **only if the new value is greater**.
+
+### Example: Track highest salary achieved
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $max: { salary: 60000 } }
+)
+```
+
+Salary becomes `60000`.
+
+---
+
+## Step 11: `$currentDate` Operator
+
+Used to **store current date or timestamp**.
+
+### Example: Add last updated timestamp
+
+```js
+db.employees.updateOne(
+  { _id: 1 },
+  { $currentDate: { lastUpdated: true } }
+)
+```
+
+---
+
+## Step 12: Final Dataset
+
+```js
+db.employees.find()
 ```
 
 ### Final Output
@@ -215,13 +214,37 @@ db.students.find()
 {
   _id: 1,
   name: "Amit",
-  highestMarks: 88,
-  lowestAttendance: 75
+  department: "Data Science",
+  salary: 60000,
+  totalExperience: 4,
+  location: "Mumbai",
+  lastUpdated: ISODate("2025-12-27T05:30:00Z")
+}
+{
+  _id: 2,
+  name: "Neha",
+  department: "HR",
+  salary: 35000,
+  experience: 3,
+  rating: 4
 }
 ```
 
 ---
 
+## Operator Summary (Quick Revision)
 
+| Operator       | Use Case                    |
+| -------------- | --------------------------- |
+| `$set`         | Add or update fields        |
+| `$unset`       | Remove fields               |
+| `$inc`         | Increase or decrease values |
+| `$mul`         | Multiply values             |
+| `$rename`      | Rename fields               |
+| `$min`         | Store minimum value         |
+| `$max`         | Store maximum value         |
+| `$currentDate` | Store current date/time     |
+
+---
 
 
