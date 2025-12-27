@@ -68,7 +68,7 @@ db.collection.updateOne({ _id: 1 }, { $currentDate: { key: true } })
 
 ---
 
-#Complete Example: `$min` and `$max` in **MongoDB**
+# Complete Example: `$min` and `$max` in **MongoDB**
 
 ### Scenario
 
