@@ -97,6 +97,63 @@ db.students.insertMany([
     status: "probation"
   }
 ])
+
+db.students.insertMany([
+  { name: "Aaron", age: 18, major: "Computer Science", gpa: 3.1, graduationYear: 2027, address: { city: "San Diego", zip: "92101" }, status: "active", hobbies: ["Coding"] },
+  { name: "Bella", age: 21, major: "Math", gpa: 3.6, graduationYear: 2025, address: { city: "Columbus", zip: "43004" }, status: "active", hobbies: ["Reading"] },
+  { name: "Caleb", age: 22, major: "Physics", gpa: 2.8, graduationYear: 2024, address: { city: "Charlotte", zip: "28201" }, status: "probation", hobbies: ["Gaming"] },
+  { name: "Delilah", age: 20, major: "Biology", gpa: 3.9, graduationYear: 2026, address: { city: "Detroit", zip: "48201" }, status: "active", hobbies: ["Music"] },
+  { name: "Ethan", age: 23, major: "Economics", gpa: 3.2, graduationYear: 2023, address: { city: "Memphis", zip: "37501" }, status: "inactive", hobbies: ["Sports"] },
+  { name: "Fiona", age: 19, major: "Chemistry", gpa: 3.7, graduationYear: 2027, address: { city: "Baltimore", zip: "21201" }, status: "active", hobbies: ["Reading", "Travel"] },
+  { name: "George", age: 24, major: "Computer Science", gpa: 3.4, graduationYear: 2023, address: { city: "Nashville", zip: "37011" }, status: "active", hobbies: ["Chess"] },
+  { name: "Hannah", age: 22, major: "Physics", gpa: 3.8, graduationYear: 2024, address: { city: "Louisville", zip: "40201" }, status: "active", hobbies: ["Music", "Coding"] },
+  { name: "Isaac", age: 20, major: "Math", gpa: 2.9, graduationYear: 2026, address: { city: "Milwaukee", zip: "53201" }, status: "probation", hobbies: ["Gaming"] },
+  { name: "Julia", age: 21, major: "Biology", gpa: 3.5, graduationYear: 2025, address: { city: "Albuquerque", zip: "87101" }, status: "active", hobbies: ["Travel"] },
+
+  { name: "Kevin", age: 23, major: "Chemistry", gpa: 3.0, graduationYear: 2024, address: { city: "Tucson", zip: "85701" }, status: "inactive", hobbies: ["Sports"] },
+  { name: "Lily", age: 19, major: "Economics", gpa: 3.9, graduationYear: 2027, address: { city: "Fresno", zip: "93650" }, status: "active", hobbies: ["Reading"] },
+  { name: "Mason", age: 22, major: "Computer Science", gpa: 3.3, graduationYear: 2025, address: { city: "Sacramento", zip: "94203" }, status: "active", hobbies: ["Coding", "Gaming"] },
+  { name: "Nora", age: 20, major: "Math", gpa: 3.4, graduationYear: 2026, address: { city: "Kansas City", zip: "64101" }, status: "active", hobbies: ["Music"] },
+  { name: "Owen", age: 24, major: "Physics", gpa: 2.7, graduationYear: 2023, address: { city: "Mesa", zip: "85201" }, status: "probation", hobbies: ["Sports"] },
+  { name: "Paula", age: 21, major: "Biology", gpa: 3.6, graduationYear: 2025, address: { city: "Omaha", zip: "68101" }, status: "active", hobbies: ["Travel"] },
+  { name: "Quentin", age: 22, major: "Chemistry", gpa: 3.5, graduationYear: 2024, address: { city: "Raleigh", zip: "27601" }, status: "active", hobbies: ["Reading"] },
+  { name: "Rachel", age: 19, major: "Computer Science", gpa: 3.8, graduationYear: 2027, address: { city: "Miami", zip: "33101" }, status: "active", hobbies: ["Coding"] },
+  { name: "Samuel", age: 23, major: "Economics", gpa: 3.2, graduationYear: 2023, address: { city: "Cleveland", zip: "44101" }, status: "inactive", hobbies: ["Gaming"] },
+  { name: "Tina", age: 20, major: "Math", gpa: 3.7, graduationYear: 2026, address: { city: "Virginia Beach", zip: "23450" }, status: "active", hobbies: ["Music"] },
+
+  { name: "Uma", age: 21, major: "Physics", gpa: 3.1, graduationYear: 2025, address: { city: "Oakland", zip: "94601" }, status: "active", hobbies: ["Travel"] },
+  { name: "Victor", age: 22, major: "Biology", gpa: 2.9, graduationYear: 2024, address: { city: "Minneapolis", zip: "55401" }, status: "probation", hobbies: ["Sports"] },
+  { name: "Wendy", age: 19, major: "Chemistry", gpa: 3.6, graduationYear: 2027, address: { city: "Tulsa", zip: "74101" }, status: "active", hobbies: ["Reading"] },
+  { name: "Xavier", age: 23, major: "Computer Science", gpa: 3.4, graduationYear: 2023, address: { city: "Arlington", zip: "76001" }, status: "active", hobbies: ["Coding"] },
+  { name: "Yara", age: 20, major: "Economics", gpa: 3.5, graduationYear: 2026, address: { city: "New Orleans", zip: "70112" }, status: "active", hobbies: ["Music"] },
+  { name: "Zane", age: 24, major: "Math", gpa: 3.0, graduationYear: 2023, address: { city: "Wichita", zip: "67201" }, status: "inactive", hobbies: ["Gaming"] },
+
+  { name: "Aisha", age: 21, major: "Biology", gpa: 3.7, graduationYear: 2025, address: { city: "Bakersfield", zip: "93301" }, status: "active", hobbies: ["Travel"] },
+  { name: "Brandon", age: 22, major: "Physics", gpa: 3.2, graduationYear: 2024, address: { city: "Tampa", zip: "33601" }, status: "active", hobbies: ["Sports"] },
+  { name: "Catherine", age: 20, major: "Chemistry", gpa: 3.9, graduationYear: 2026, address: { city: "Aurora", zip: "80010" }, status: "active", hobbies: ["Reading"] },
+  { name: "Derek", age: 23, major: "Computer Science", gpa: 3.3, graduationYear: 2023, address: { city: "Anaheim", zip: "92801" }, status: "inactive", hobbies: ["Gaming"] },
+  { name: "Elena", age: 19, major: "Math", gpa: 3.8, graduationYear: 2027, address: { city: "Honolulu", zip: "96801" }, status: "active", hobbies: ["Music"] },
+
+  { name: "Farhan", age: 22, major: "Economics", gpa: 3.4, graduationYear: 2024, address: { city: "Santa Ana", zip: "92701" }, status: "active", hobbies: ["Travel"] },
+  { name: "Gabriella", age: 21, major: "Physics", gpa: 3.6, graduationYear: 2025, address: { city: "Riverside", zip: "92501" }, status: "active", hobbies: ["Reading"] },
+  { name: "Harold", age: 24, major: "Chemistry", gpa: 2.8, graduationYear: 2023, address: { city: "Corpus Christi", zip: "78401" }, status: "probation", hobbies: ["Sports"] },
+  { name: "Isabella", age: 20, major: "Biology", gpa: 3.9, graduationYear: 2026, address: { city: "Lexington", zip: "40507" }, status: "active", hobbies: ["Music"] },
+  { name: "Jonah", age: 23, major: "Computer Science", gpa: 3.5, graduationYear: 2023, address: { city: "Stockton", zip: "95201" }, status: "active", hobbies: ["Coding"] },
+
+  { name: "Kylie", age: 19, major: "Math", gpa: 3.6, graduationYear: 2027, address: { city: "Henderson", zip: "89002" }, status: "active", hobbies: ["Reading"] },
+  { name: "Landon", age: 22, major: "Economics", gpa: 3.1, graduationYear: 2024, address: { city: "Saint Paul", zip: "55101" }, status: "inactive", hobbies: ["Gaming"] },
+  { name: "Monica", age: 21, major: "Physics", gpa: 3.7, graduationYear: 2025, address: { city: "St. Louis", zip: "63101" }, status: "active", hobbies: ["Travel"] },
+  { name: "Noah", age: 20, major: "Chemistry", gpa: 3.4, graduationYear: 2026, address: { city: "Cincinnati", zip: "45201" }, status: "active", hobbies: ["Sports"] },
+  { name: "Olga", age: 24, major: "Biology", gpa: 3.2, graduationYear: 2023, address: { city: "Pittsburgh", zip: "15201" }, status: "inactive", hobbies: ["Music"] },
+
+  { name: "Peter", age: 23, major: "Computer Science", gpa: 3.8, graduationYear: 2024, address: { city: "Greensboro", zip: "27401" }, status: "active", hobbies: ["Coding"] },
+  { name: "Queenie", age: 19, major: "Math", gpa: 3.5, graduationYear: 2027, address: { city: "Anchorage", zip: "99501" }, status: "active", hobbies: ["Reading"] },
+  { name: "Rohan", age: 21, major: "Physics", gpa: 3.3, graduationYear: 2025, address: { city: "Plano", zip: "75023" }, status: "active", hobbies: ["Gaming"] },
+  { name: "Sophia", age: 22, major: "Economics", gpa: 3.9, graduationYear: 2024, address: { city: "Lincoln", zip: "68501" }, status: "active", hobbies: ["Travel"] },
+  { name: "Thomas", age: 24, major: "Chemistry", gpa: 2.9, graduationYear: 2023, address: { city: "Orlando", zip: "32801" }, status: "probation", hobbies: ["Sports"] }
+]);
+
+
 // Output: { acknowledged: true, insertedIds: { ... } }
 ```
 
