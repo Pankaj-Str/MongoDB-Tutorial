@@ -242,6 +242,77 @@ db.student.find({$nor:[{major:"Math"},{gpa:4.0}]}).pretty();
   
   
   
+db.employees.insertMany([
+  {
+    _id: 1,
+    name: "Amit",
+    department: "IT",
+    salary: 40000,
+    experience: 2,
+    rating: 3
+  },
+  {
+    _id: 2,
+    name: "Neha",
+    department: "HR",
+    salary: 35000,
+    experience: 3,
+    rating: 4
+  }
+]);
+
+// db.employees.find();
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $set: { department: "Data Science", location: "Mumbai" } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $unset: { rating: 1 } }
+);
+
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $inc: { salary: 15000 } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $mul: { experience: 2 } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $rename: { experience: "totalExperience" } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $min: { salary: 42000 } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $max: { salary: 60000 } }
+);
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $currentDate: { lastUpdated: true } }
+);
+
+db.employees.find();
+
+
+
+
+
+
+
+
   
   
   
