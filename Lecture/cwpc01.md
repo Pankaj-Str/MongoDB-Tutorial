@@ -240,7 +240,7 @@ db.student.find({age:{$not:{$lt:22}}}).pretty();
 
 db.student.find({$nor:[{major:"Math"},{gpa:4.0}]}).pretty(); 
   
-  
+---------- Date : 11 March 2026  
   
 db.employees.insertMany([
   {
