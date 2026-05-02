@@ -160,3 +160,13 @@ db.students.insertMany([
 // db.students.find().sort({ age: 1 });
 
 ```
+- $eq: Equal to a value.
+- $ne: Not equal to a value.
+- $gt: Greater than a value.
+- $gte: Greater than or equal to a value.
+- $lt: Less than a value.
+- $lte: Less than or equal to a value.
+- $in: Matches any value in an array.
+- $or: Combines multiple conditions with OR logic.
+- $and: Combines multiple conditions with AND logic.
+
