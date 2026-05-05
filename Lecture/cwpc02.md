@@ -170,7 +170,7 @@ db.students.insertMany([
 - $or: Combines multiple conditions with OR logic.
 - $and: Combines multiple conditions with AND logic.
 
-#### Date : 5 May 2026
+### Date : 5 May 2026
 
 ```xml
 
