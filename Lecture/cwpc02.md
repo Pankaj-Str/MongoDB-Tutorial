@@ -170,3 +170,52 @@ db.students.insertMany([
 - $or: Combines multiple conditions with OR logic.
 - $and: Combines multiple conditions with AND logic.
 
+#### Date : 5 May 2026
+
+```xml
+
+// limit and skip
+
+// db.students.find().sort({
+//   name: -1
+// }).limit(3).skip(3);
+
+
+// update 
+db.students.updateOne(
+    { name:"Alice" },
+    { $set : { age: 21 }, $push : { hobbies : "Swimming" }}
+    
+)
+
+db.students.find( {name: "Alice" });
+
+// update many 
+db.students.updateMany(
+  
+  { status : "active" },
+  { $inc : { gpa : 0.1 }}
+)
+
+
+db.students.find( {name: "Alice" });
+
+// replaceOne 
+
+db.students.replaceOne(
+    { name : "Alice" },
+    { name : "Alice" ,age: 34 , major: "Design ", gpa : 3.7 }
+);
+
+
+db.students.find( {name: "Alice" });
+
+// delete 
+db.students.deleteOne( { name: "Alice" } );
+
+// deleteMany
+db.students.deleteMany( { status: "active" } );
+
+db.students.find();
+
+```
