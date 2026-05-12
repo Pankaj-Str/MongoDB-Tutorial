@@ -223,6 +223,22 @@ db.students.find();
 
 ```yml
 
+
+
+// Operator	Use Case
+// $set	Add or update fields
+// $unset	Remove fields
+// $inc	Increase or decrease values
+// $mul	Multiply values
+// $rename	Rename fields
+// $min	Store minimum value
+// $max	Store maximum value
+// $currentDate	Store current date/time
+
+
+
+
+
 db.employees.insertMany([
   {
     _id: 1,
@@ -289,35 +305,80 @@ for (let i = 1; i <= 200; i++) {
 
 db.employees.insertMany(employees);
 
+// Check Records
+// db.employees.find().limit(10)
+
+// $set - update operator 
+db.employees.updateOne(
+  { _id: 1 },
+  { $set: { department: "Sales", location: "Surat" } }
+);
 
 
 
+// $unset() - remove
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $unset: { rating: 1 } }
+);
 
 
 
+// $inc()
+db.employees.updateOne(
+  { _id: 1 },
+  { $inc: { salary: 5000 } }
+);
 
 
+db.employees.find({_id:1});
+
+// $mul()
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $mul: { experience: 2 } }
+)
+
+db.employees.find({_id:1});
+
+// $rename 
+db.employees.updateOne(
+  { _id: 1 },
+  { $rename: { experience: "totalExperience" } }
+);
+
+db.employees.find({_id:1});
+
+// $min -> Salary becomes 42000 because 42000 < 45000.
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $min: { salary: 42000 } }
+);
+
+db.employees.find({_id:1});
 
 
+// $max
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $max: { salary: 60000 } }
+)
 
 
+db.employees.find({_id:1});
+
+// $currentDate
+
+db.employees.updateOne(
+  { _id: 1 },
+  { $currentDate: { lastUpdated: true } }
+)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+db.employees.find({_id:1});
 
 ```
