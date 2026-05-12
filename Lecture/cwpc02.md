@@ -223,85 +223,71 @@ db.students.find();
 
 ```yml
 
-// ===============================================
-// Insert 200+ Random Employee Records in MongoDB
-// Collection: employees
-// ===============================================
-
-db.employees.drop()
-
-const names = [
-  "Amit", "Neha", "Rahul", "Priya", "Rohit", "Sneha",
-  "Karan", "Pooja", "Vikas", "Anjali", "Suresh", "Meena",
-  "Arjun", "Kavita", "Deepak", "Riya", "Manoj", "Nikita",
-  "Yash", "Simran", "Aakash", "Komal", "Harsh", "Divya"
-]
-
-const departments = [
-  "IT",
-  "HR",
-  "Finance",
-  "Marketing",
-  "Sales",
-  "Support",
-  "Admin"
-]
-
-let employees = []
-
-for (let i = 1; i <= 250; i++) {
-
-  let employee = {
-    _id: i,
-    
-    name: names[Math.floor(Math.random() * names.length)],
-
-    department: departments[Math.floor(Math.random() * departments.length)],
-
-    salary: Math.floor(Math.random() * 70000) + 30000, 
-    // 30000 - 100000
-
-    experience: Math.floor(Math.random() * 15) + 1, 
-    // 1 - 15 years
-
-    rating: Math.floor(Math.random() * 5) + 1,
-    // 1 - 5 rating
-
-    age: Math.floor(Math.random() * 25) + 22,
-    // 22 - 46 age
-
-    city: [
-      "Mumbai",
-      "Delhi",
-      "Pune",
-      "Bangalore",
-      "Hyderabad",
-      "Chennai"
-    ][Math.floor(Math.random() * 6)],
-
-    joiningYear: Math.floor(Math.random() * 8) + 2018,
-
-    email: `employee${i}@company.com`,
-
-    active: Math.random() > 0.2
+db.employees.insertMany([
+  {
+    _id: 1,
+    name: "Amit",
+    department: "IT",
+    salary: 40000,
+    experience: 2,
+    rating: 3
+  },
+  {
+    _id: 2,
+    name: "Neha",
+    department: "HR",
+    salary: 35000,
+    experience: 3,
+    rating: 4
+  },
+  {
+    _id: 3,
+    name: "Rahul",
+    department: "Finance",
+    salary: 50000,
+    experience: 5,
+    rating: 5
+  },
+  {
+    _id: 4,
+    name: "Priya",
+    department: "Sales",
+    salary: 32000,
+    experience: 1,
+    rating: 2
+  },
+  {
+    _id: 5,
+    name: "Karan",
+    department: "IT",
+    salary: 60000,
+    experience: 7,
+    rating: 5
   }
+])
 
-  employees.push(employee)
+
+// Insert 200+ Employees Automatically
+let departments = ["IT", "HR", "Finance", "Sales", "Marketing"];
+let names = [
+  "Amit", "Neha", "Rahul", "Priya", "Karan",
+  "Sneha", "Rohit", "Anjali", "Vikas", "Pooja"
+];
+
+let employees = [];
+
+for (let i = 1; i <= 200; i++) {
+  employees.push({
+    _id: i,
+    name: names[Math.floor(Math.random() * names.length)] + i,
+    department: departments[Math.floor(Math.random() * departments.length)],
+    salary: Math.floor(Math.random() * 50000) + 30000,
+    experience: Math.floor(Math.random() * 10) + 1,
+    rating: Math.floor(Math.random() * 5) + 1
+  });
 }
 
-// Insert Records
-db.employees.insertMany(employees)
-
-// Check Records
-// db.employees.find().limit(10)
-
-// $set - update operator 
-db.employees.updateOne(
-  { _id: 1 },
-  { $set: { department: "Data Science", location: "Surat" } }
-);
-
-db.employees.find({_id:1});
+db.employees.insertMany(employees);
 
 
 
