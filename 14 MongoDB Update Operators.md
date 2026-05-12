@@ -19,24 +19,77 @@ use companyDB
 We start with an **employees dataset**.
 
 ```js
-db.employees.insertMany([
-  {
-    _id: 1,
-    name: "Amit",
-    department: "IT",
-    salary: 40000,
-    experience: 2,
-    rating: 3
-  },
-  {
-    _id: 2,
-    name: "Neha",
-    department: "HR",
-    salary: 35000,
-    experience: 3,
-    rating: 4
+// ===============================================
+// Insert 200+ Random Employee Records in MongoDB
+// Collection: employees
+// ===============================================
+
+db.employees.drop()
+
+const names = [
+  "Amit", "Neha", "Rahul", "Priya", "Rohit", "Sneha",
+  "Karan", "Pooja", "Vikas", "Anjali", "Suresh", "Meena",
+  "Arjun", "Kavita", "Deepak", "Riya", "Manoj", "Nikita",
+  "Yash", "Simran", "Aakash", "Komal", "Harsh", "Divya"
+]
+
+const departments = [
+  "IT",
+  "HR",
+  "Finance",
+  "Marketing",
+  "Sales",
+  "Support",
+  "Admin"
+]
+
+let employees = []
+
+for (let i = 1; i <= 250; i++) {
+
+  let employee = {
+    _id: i,
+    
+    name: names[Math.floor(Math.random() * names.length)],
+
+    department: departments[Math.floor(Math.random() * departments.length)],
+
+    salary: Math.floor(Math.random() * 70000) + 30000, 
+    // 30000 - 100000
+
+    experience: Math.floor(Math.random() * 15) + 1, 
+    // 1 - 15 years
+
+    rating: Math.floor(Math.random() * 5) + 1,
+    // 1 - 5 rating
+
+    age: Math.floor(Math.random() * 25) + 22,
+    // 22 - 46 age
+
+    city: [
+      "Mumbai",
+      "Delhi",
+      "Pune",
+      "Bangalore",
+      "Hyderabad",
+      "Chennai"
+    ][Math.floor(Math.random() * 6)],
+
+    joiningYear: Math.floor(Math.random() * 8) + 2018,
+
+    email: `employee${i}@company.com`,
+
+    active: Math.random() > 0.2
   }
-])
+
+  employees.push(employee)
+}
+
+// Insert Records
+db.employees.insertMany(employees)
+
+// Check Records
+db.employees.find().limit(10)
 ```
 
 ---
