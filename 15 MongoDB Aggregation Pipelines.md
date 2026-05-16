@@ -204,6 +204,30 @@ db.sales.aggregate([
 ```
 (Note: This example is simplified; adjust fields for real join.)
 
+---
+#### other example - 
+```javascript
+db.students.insertMany([
+  {_id:1,name:'raj',course_id:101},
+  {_id:2,name:'sumit',course_id:102}
+]);
+
+db.course.insertMany([
+  {_id:101,course_name:'python'},
+  {_id:102,course_name:'java'}
+]);
+
+
+db.students.aggregate([
+  {$lookup:{
+    from:'course',
+    localField:"course_id",
+    foreignField:"_id",
+    as:'course_details'}
+}])
+
+```
+
 #### 11. `$sortByCount` - Group and count, then sort (shortcut)
 ```javascript
 db.sales.aggregate([
